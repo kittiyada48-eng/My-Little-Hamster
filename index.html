@@ -263,7 +263,7 @@ let k=j([d.fl]);if(k!==r.ls){r.ls=k;drawFL(p)}k=j([d.fs,d.ws,d.bd]);if(k!==r.lb)
 const w=$('#wl'+p);w.classList.toggle('on',!!d.w);if(d.w)w.style.animationDuration=d.w;if(NET.me==1)S.gm=d.gm}
 function fullS(){return Object.assign({},S,{h:S.h.map(h=>Object.assign({},h,{lg:h.lg.slice(0,15)}))})}
 function onData(d){if(NET.me==1){if(d.t=='s'){d.a.forEach((q,i)=>applySnap(i,q));S.gm=d.gm}else if(d.t=='S'){const c=S.cur;Object.assign(S,d.S);S.cur=c;render()}else if(d.t=='say')say(d.i,d.txt,d.x);else if(d.t=='fx')fx(d.i,d.txt,d.x,d.y)}
-else if(d.t=='tap'&&ZN[d.z]&&S.h[d.i])tap(d.i,d.z);else if(d.t=='ac'&&Object.keys(AC).includes(d.a)&&!['pick','bye','host','join'].includes(d.a)&&S.h[d.cur]){const c=S.cur;S.cur=d.cur;NET.xg=1;try{AC[d.a](d.v)}catch(e){}NET.xg=0;S.cur=c;render()}}
+else if(d.t=='reqS'){net({t:'S',S:fullS()})}else if(d.t=='tap'&&ZN[d.z]&&S.h[d.i])tap(d.i,d.z);else if(d.t=='ac'&&Object.keys(AC).includes(d.a)&&!['pick','bye','host','join'].includes(d.a)&&S.h[d.cur]){const c=S.cur;S.cur=d.cur;NET.xg=1;try{AC[d.a](d.v)}catch(e){}NET.xg=0;S.cur=c;render()}}
 
 function netErr(t){say(S.cur,t,180);bye()}
 function host(){if(typeof Peer==='undefined')return say(S.cur,'ต้องต่อเน็ตก่อนเล่นออนไลน์ 🌐',180);bye();NET.code=String(ri(1000,9999));NET.st='wait';const p=NET.p=new Peer('mlh-'+NET.code);
@@ -271,8 +271,8 @@ p.on('connection',c=>{if(NET.c){c.close();return}NET.c=c;c.on('open',()=>up(0))}
 function join(code){if(typeof Peer==='undefined')return say(S.cur,'ต้องต่อเน็ตก่อนเล่นออนไลน์ 🌐',180);if(!/^\d{4}$/.test(code))return say(S.cur,'ใส่รหัส 4 หลักก่อนนะ',180);bye();NET.code=code;NET.st='join';const p=NET.p=new Peer();
 p.on('open',()=>{const c=NET.c=p.connect('mlh-'+code,{reliable:true,serialization:'json'});c.on('open',()=>up(1));c.on('error',()=>netErr('เชื่อมต่อไม่ได้'))});
 p.on('error',e=>netErr(e.type=='peer-unavailable'?'ไม่พบห้องนี้':'เชื่อมต่อไม่ได้ ('+e.type+')'));setTimeout(()=>{if(NET.st=='join'&&NET.p===p)netErr('หมดเวลา เชื่อมต่อไม่ได้')},15000);render()}
-function up(me){NET.on=1;NET.me=me;NET.st='on';NET.c.on('data',onData);NET.c.on('close',bye);
-if(me)R.forEach(r=>{r.rem=1;r.n++;rst(r);r.ls=r.lb=r.lg2=''});else{net({t:'S',S:fullS()});NET.k=0;NET.iv=setInterval(()=>{net({t:'s',a:[snap(0),snap(1)],gm:S.gm});if(++NET.k%5==0)net({t:'S',S:fullS()})},200)}
+function up(me){NET.on=1;NET.me=me;NET.st='on';NET.c.off('data');NET.c.on('data',onData);NET.c.on('close',bye);
+if(me){NET.c.send({t:'reqS'});R.forEach(r=>{r.rem=1;r.n++;rst(r);r.ls=r.lb=r.lg2=''})}else{net({t:'S',S:fullS()});NET.k=0;clearInterval(NET.iv);NET.iv=setInterval(()=>{net({t:'s',a:[snap(0),snap(1)],gm:S.gm});if(++NET.k%5==0)net({t:'S',S:fullS()})},200)}
 showCage();say(S.cur,'เชื่อมต่อแล้ว! เลี้ยงด้วยกันนะ 🎉',180)}
 function bye(){const was=NET.on,c=NET.c,p=NET.p;clearInterval(NET.iv);NET.on=0;NET.c=NET.p=null;NET.st='';NET.code='';try{c&&c.close();p&&p.destroy()}catch(e){}
 if(was)R.forEach((r,q)=>{if(r.rem){r.rem=0;r.n++;rst(r);r.ri.setAttribute('class','ri');put(r,58,211,0);cheek(r);drawBG(q);drawFG(q);drawFL(q)}});showCage()}
