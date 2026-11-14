@@ -107,7 +107,7 @@ p:[['m-hop',['อุ้งเท้าจิ๋ว!'],'g'],['m-flinch',['เก�
 k:[['m-sway',['ลูบอีกๆ'],'g'],['m-stretch',['ยืดตัว~'],'g'],['m-squat',['เคลิ้มจนหมอบ'],'g'],['m-lift',['ชอบ~'],''],['m-spin',['หมุนตัวด้วยความสุข'],'g']],
 d:[['m-hop',['เล่นกัน!'],'g'],['m-jump',['เย้!'],'g'],['m-bite',['ตื๊ดๆ อย่ากวน'],'b'],['m-tilt',['เรียกเหรอ?'],'']]};
 const hist={};function pn(k,a){const h=hist[k]||(hist[k]=[]);let v,n=0;do{v=pk(a)}while(h.includes(v)&&a.length>1&&++n<9);h.push(v);if(h.length>Math.min(3,a.length-1))h.shift();return v}
-const NET={on:0,me:0,c:null,p:null,st:'',code:'',iv:0,k:0,xg:0},rem=()=>NET.on&&NET.me==1;
+const NET={on:0,me:0,c:null,p:null,st:'',code:'',iv:0,k:0,xg:0,hb:0,rt:0,auto:0},rem=()=>NET.on&&NET.me==1;
 const mk=(T,V)=>T.flatMap(t=>V.map(v=>t.split('§').join(v)));
 const SNK=mk(['ขอ§หน่อยน้า','อยากกิน§อ่ะ','มี§ไหมเอ่ย?','ท้องร้อง คิดถึง§','§~ §~ ขอหน่อยนะ','ถ้าได้§ จะเชื่อฟังเลย','ขอ§ชิ้นเดียวก็ได้','นึกถึง§แล้วน้ำลายไหล'],Object.values(FD).map(f=>f[1]).concat('ขนมอร่อยๆ'));
 const PAR=mk(['คิดถึง§จัง','§อยู่ไหนน้า','อยากให้§มากอด','§ไม่มาเล่นด้วยเลย','ฝันถึง§เมื่อคืน','§~ มาหาหนูหน่อย','อยู่คนเดียวเหงา อยากเจอ§','เมื่อไหร่§จะมา'],['พ่อ','แม่','พ่อกับแม่','คุณพ่อคุณแม่']).flatMap(t=>['','🥺','~','💕'].map(l=>t+l));
@@ -221,7 +221,7 @@ dec(){const h=H0(),o=Object.keys(DC).filter(k=>S.own[k]);return '<div>ของ�
 shop(){return '<div>อาหาร ⭐ = พิเศษ ให้นาน ๆ ครั้งนะ</div>'+Object.keys(FD).map(k=>`<div class="row"><span>${FD[k][0]} ${FD[k][1]}${FD[k][4]?' ⭐':''}</span>${B('buy',k,'🪙'+FD[k][2])}</div>`).join('')+'<div>ของตกแต่ง</div>'+Object.keys(DC).map(k=>{const d=DC[k];return `<div class="row"><span>${d[0]} ${d[1]}</span>${S.own[k]?'✔️':maxTr()<d[3]?'🔒 ไว้ใจ '+d[3]:B('buy',k,'🪙'+d[2])}</div>`}).join('')+BD.slice(1).map((b,i)=>`<div class="row"><span>🟫 ${b[0]}</span>${S.own['bd'+(i+1)]?'✔️':B('buy','bd'+(i+1),'🪙'+b[1])}</div>`).join('')},
 inv(){return Object.keys(FD).filter(k=>S.inv[k]>0).map(k=>`<div class="row"><span>${FD[k][0]} ${FD[k][1]} ×${S.inv[k]}</span>${B('feed',k,'ให้')}</div>`).join('')||'<p>คลังว่าง ไปซื้อที่ร้านค้า 🛒</p>'},
 log(){return '<div>'+AH.map(a=>(S.ach[a[0]]?'🏆 ':'🔒 ')+a[1]).join('<br>')+'</div>'+H0().lg.map(x=>`<div class="row"><small>${x}</small></div>`).join('')},
-sw(){const nc=NET.on?`<div class="row"><span>🟢 เลี้ยงด้วยกัน · ${NET.me?'คุณเป็นแขก':'คุณเป็นเจ้าของห้อง'}</span>${B('bye','','ตัดการเชื่อมต่อ')}</div>`:NET.st?`<div class="row"><span>⏳ รหัสห้อง <b>${NET.code}</b> · ${NET.st=='wait'?'รอเพื่อน...':'กำลังเชื่อมต่อ...'}</span>${B('bye','','ยกเลิก')}</div>`:`<div class="row"><span>🌐 เล่น 2 คนออนไลน์</span></div>`+B('host','','🏠 สร้างห้อง')+`<div class="row"><input id="rc" maxlength="4" inputmode="numeric" placeholder="รหัส 4 หลัก" style="width:100px;font:inherit;padding:5px;border-radius:10px;border:2px solid var(--br);background:var(--cd);color:var(--ink)">${B('join','','🚪 เข้าห้อง')}</div>`;
+sw(){const nc=NET.on?`<div class="row"><span>🟢 อยู่ในห้อง <b>${NET.code}</b> · ${NET.me?'แขก':'เจ้าของห้อง'}</span>${B('bye','','ออกจากห้อง')}</div>`:NET.st?`<div class="row"><span>⏳ ห้อง <b>${NET.code}</b> · ${NET.st=='wait'?'รอเพื่อนเข้าห้อง...':NET.st=='re'?'กำลังกลับเข้าห้องอัตโนมัติ...':'กำลังเข้าห้อง...'}</span>${B('bye','','ยกเลิก')}</div>`:`<div class="row"><span>🌐 เล่น 2 คนออนไลน์</span></div>`+B('host','','🏠 สร้างห้อง')+`<div class="row"><input id="rc" maxlength="4" inputmode="numeric" placeholder="รหัส 4 หลัก" style="width:100px;font:inherit;padding:5px;border-radius:10px;border:2px solid var(--br);background:var(--cd);color:var(--ink)">${B('join','','🚪 เข้าห้อง')}</div>`;
 return nc+S.h.map((h,i)=>{const m=MD[mood(i)],on=NET.on,mine=i==NET.me;return `<div class="row"><span>🐹 ${h.n} ${m[0]}<br><small>ไว้ใจ ${Math.round(h.s.tr)}%${on?'':' · เล่นล่าสุด '+new Date(h.lp).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})}</small></span>${B('pick',i,S.cur==i?'✅ กำลังเลี้ยง':'เลี้ยงตัวนี้')}</div>`}).join('')+'<p>แต่ละตัวมีกรงแยกกัน • ออนไลน์: เลี้ยงด้วยกัน ทำได้ทุกอย่างกับทั้งสองกรง<br>⚠️ คนเข้าห้องจะถูกทับข้อมูลด้วยของเจ้าของห้อง</p>'},
 visit(){const h=H0();return `<div class="row"><span>🏡 เยี่ยมกรง ${h.n}</span><span>🤝 ${Math.round(h.s.tr)}%</span></div><p>แตะที่ตัวเพื่อลูบ หรือส่งอาหารเป็นของขวัญ 🎁</p>`+(Object.keys(FD).filter(k=>S.inv[k]>0).map(k=>B('feed',k,FD[k][0]+'×'+S.inv[k])).join('')||'<p>ไม่มีอาหารให้ส่ง</p>')+B('pick',NET.me,'🏠 กลับกรงของฉัน')}};
 function cmd(a,o,i){const r=R[i==null?S.cur:i];r.cmd=a;Object.assign(r,o);r.n++}
@@ -229,7 +229,7 @@ const AC={
 feed(k){if(!S.inv[k])return say(S.cur,'ไม่มีของนี้ ไปซื้อที่ร้านค้านะ',180);S.inv[k]--;if(rem()){net({t:'gift',k});fx(S.cur,FD[k][0],200,150);say(S.cur,'ส่งของขวัญให้เพื่อนแล้ว 🎁',180)}else giveFood(S.cur,k)},
 call(){cmd('lk',{cm:1});say(S.cur,'มานี่มา~ 👋',180)},
 water(){const r=R[S.cur];ad(r,'ha',2);ad(r,'hy',1);fx(S.cur,'💧',335,130);say(S.cur,'เติมน้ำสะอาดแล้ว 💧',180)},
-run(v){cmd('wh',{sp:+v})},pose(k){if(H0().s.tr<SP[k][2])return say(S.cur,'ยังไม่ไว้ใจพอ 🔒',180);cmd('sp',{pz:k})},host(){host()},join(){join(($('#rc')||{}).value||'')},bye(){bye()},sl(){cmd('sl')},dig(){cmd('di')},cln(){cmd('cl')},stop(){R[S.cur].n++},
+run(v){cmd('wh',{sp:+v})},pose(k){if(H0().s.tr<SP[k][2])return say(S.cur,'ยังไม่ไว้ใจพอ 🔒',180);cmd('sp',{pz:k})},host(){host()},join(){join(($('#rc')||{}).value||'')},bye(){bye(1)},sl(){cmd('sl')},dig(){cmd('di')},cln(){cmd('cl')},stop(){R[S.cur].n++},
 tog(k){const h=H0(),a=DC[k][4]=='f'?h.fs:h.ws,j=a.indexOf(k);if(j>=0)a[j]=0;else{const e=a.indexOf(0);if(e<0)return say(S.cur,'ตำแหน่งเต็ม',180);a[e]=k}drawBG(S.cur)},
 shuf(){const h=H0();[h.fs,h.ws].forEach(a=>a.sort(()=>Math.random()-.5));drawBG(S.cur)},
 bed(v){H0().bd=+v;drawBG(S.cur);drawFG(S.cur)},
@@ -250,7 +250,7 @@ if(i==S.cur&&--r.cc<=0){r.cc=ri(25,45);complain(i)}});
 if(S.gm%10==0){save();if(!rem())ach()}hud();if(S.gm%6==0&&tab=='log')render()}
 function init(){$('#stage').insertAdjacentHTML('afterbegin',cageSVG(0)+cageSVG(1));
 [0,1].forEach(i=>{const r=R[i]={i,x:58,y:211,n:0,a:'',cmd:0,fr:0,cc:ri(20,40),sp:0,cm:0,p:$('#p'+i),hm:$('#hm'+i),ri:$('#ri'+i)};drawBG(i);drawFG(i);drawFL(i);put(r,58,211,0);cheek(r)});
-showCage();[0,1].forEach(i=>loop(R[i]));setInterval(tick,1000);addEventListener('visibilitychange',save);addEventListener('pagehide',save)}
+showCage();[0,1].forEach(i=>loop(R[i]));setInterval(tick,1000);addEventListener('visibilitychange',()=>{save();if(!document.hidden&&NET.auto&&!NET.on&&NET.code)reconn()});addEventListener('pagehide',save);try{const rm=JSON.parse(localStorage.getItem('mlh_room')||'null');if(rm&&rm.code){NET.code=rm.code;NET.me=rm.me;NET.auto=1;setTimeout(()=>reconn(),400)}}catch(e){}}
 /* ---------- ออนไลน์ 2 คน (PeerJS) ---------- */
 function net(m){try{if(NET.c&&NET.c.open)NET.c.send(m)}catch(e){}}
 function giveFood(i,k){const h=S.h[i],r=R[i];h.fl.push({k,x:ri(198,238)});drawFL(i);if(r.hm.classList.contains('slp')&&Math.random()<.5)return say(i,'zzz...',180);cmd('fo',0,i)}
@@ -262,19 +262,31 @@ Object.assign(h,{s:d.s,sh:d.sh,m:d.m,fl:d.fl,fs:d.fs,ws:d.ws,bd:d.bd,dg:d.dg,ms:
 let k=j([d.fl]);if(k!==r.ls){r.ls=k;drawFL(p)}k=j([d.fs,d.ws,d.bd]);if(k!==r.lb){r.lb=k;drawBG(p)}k=j([d.dg,d.ms,d.bd]);if(k!==r.lg2){r.lg2=k;drawFG(p)}
 const w=$('#wl'+p);w.classList.toggle('on',!!d.w);if(d.w)w.style.animationDuration=d.w;if(NET.me==1)S.gm=d.gm}
 function fullS(){return Object.assign({},S,{h:S.h.map(h=>Object.assign({},h,{lg:h.lg.slice(0,15)}))})}
-function onData(d){if(NET.me==1){if(d.t=='s'){d.a.forEach((q,i)=>applySnap(i,q));S.gm=d.gm}else if(d.t=='S'){const c=S.cur;Object.assign(S,d.S);S.cur=c;render()}else if(d.t=='say')say(d.i,d.txt,d.x);else if(d.t=='fx')fx(d.i,d.txt,d.x,d.y)}
+function saveRoom(on){try{if(on&&NET.code)localStorage.setItem('mlh_room',JSON.stringify({code:NET.code,me:NET.me}));else localStorage.removeItem('mlh_room')}catch(e){}}
+function onData(d){if(d&&d.t=='ping'){net({t:'pong'});return}if(d&&d.t=='pong')return;
+if(NET.me==1){if(d.t=='s'){d.a.forEach((q,i)=>applySnap(i,q));S.gm=d.gm}else if(d.t=='S'){const c=S.cur;Object.assign(S,d.S);S.cur=c;render()}else if(d.t=='say')say(d.i,d.txt,d.x);else if(d.t=='fx')fx(d.i,d.txt,d.x,d.y)}
 else if(d.t=='reqS'){net({t:'S',S:fullS()})}else if(d.t=='tap'&&ZN[d.z]&&S.h[d.i])tap(d.i,d.z);else if(d.t=='ac'&&Object.keys(AC).includes(d.a)&&!['pick','bye','host','join'].includes(d.a)&&S.h[d.cur]){const c=S.cur;S.cur=d.cur;NET.xg=1;try{AC[d.a](d.v)}catch(e){}NET.xg=0;S.cur=c;render()}}
 
-function netErr(t){say(S.cur,t,180);bye()}
-function host(){if(typeof Peer==='undefined')return say(S.cur,'ต้องต่อเน็ตก่อนเล่นออนไลน์ 🌐',180);bye();NET.code=String(ri(1000,9999));NET.st='wait';const p=NET.p=new Peer('mlh-'+NET.code,{host:'0.peerjs.com',port:443,secure:true});
-p.on('connection',c=>{if(NET.c){c.close();return}NET.c=c;c.on('open',()=>up(0))});p.on('error',e=>{if(e.type=='unavailable-id')host();else netErr('เชื่อมต่อไม่ได้ ('+e.type+')')});render()}
-function join(code){if(typeof Peer==='undefined')return say(S.cur,'ต้องต่อเน็ตก่อนเล่นออนไลน์ 🌐',180);if(!/^\d{4}$/.test(code))return say(S.cur,'ใส่รหัส 4 หลักก่อนนะ',180);bye();NET.code=code;NET.st='join';const p=NET.p=new Peer(undefined,{host:'0.peerjs.com',port:443,secure:true});
+function netErr(t){say(S.cur,t,180);if(NET.auto&&NET.code){drop(1)}else{bye(1)}}
+function host(keepCode){if(typeof Peer==='undefined')return say(S.cur,'ต้องต่อเน็ตก่อนเล่นออนไลน์ 🌐',180);const cd=keepCode||String(ri(1000,9999));bye(0);NET.code=cd;NET.me=0;NET.auto=1;NET.st='wait';saveRoom(1);
+const p=NET.p=new Peer('mlh-'+NET.code,{host:'0.peerjs.com',port:443,secure:true});
+p.on('connection',c=>{if(NET.c&&NET.c.open){c.close();return}NET.c=c;c.on('open',()=>up(0))});
+p.on('disconnected',()=>{if(NET.auto&&NET.p===p&&!p.destroyed)try{p.reconnect()}catch(e){}});
+p.on('error',e=>{if(e.type=='unavailable-id'){if(keepCode)setTimeout(()=>host(keepCode),2000);else host()}else netErr('เชื่อมต่อไม่ได้ ('+e.type+')')});render()}
+function join(code){if(typeof Peer==='undefined')return say(S.cur,'ต้องต่อเน็ตก่อนเล่นออนไลน์ 🌐',180);if(!/^\d{4}$/.test(code))return say(S.cur,'ใส่รหัส 4 หลักก่อนนะ',180);bye(0);NET.code=code;NET.me=1;NET.auto=1;NET.st='join';saveRoom(1);
+const p=NET.p=new Peer(undefined,{host:'0.peerjs.com',port:443,secure:true});
 p.on('open',()=>{const c=NET.c=p.connect('mlh-'+code,{reliable:true,serialization:'json'});c.on('open',()=>up(1));c.on('error',()=>netErr('เชื่อมต่อไม่ได้'))});
-p.on('error',e=>netErr(e.type=='peer-unavailable'?'ไม่พบห้องนี้':'เชื่อมต่อไม่ได้ ('+e.type+')'));setTimeout(()=>{if(NET.st=='join'&&NET.p===p)netErr('หมดเวลา เชื่อมต่อไม่ได้')},15000);render()}
-function up(me){NET.on=1;NET.me=me;NET.st='on';NET.c.off('data');NET.c.on('data',onData);NET.c.on('close',bye);
+p.on('disconnected',()=>{if(NET.auto&&NET.p===p&&!p.destroyed)try{p.reconnect()}catch(e){}});
+p.on('error',e=>netErr(e.type=='peer-unavailable'?'ไม่พบห้องนี้':'เชื่อมต่อไม่ได้ ('+e.type+')'));
+setTimeout(()=>{if((NET.st=='join'||NET.st=='re')&&NET.p===p)netErr('กำลังลองเข้าห้องใหม่...')},12000);render()}
+function reconn(){if(!NET.auto||!NET.code)return;clearTimeout(NET.rt);NET.st='re';render();if(NET.me==0)host(NET.code);else join(NET.code)}
+function drop(retry){const was=NET.on,c=NET.c,p=NET.p;clearInterval(NET.iv);clearInterval(NET.hb);NET.on=0;NET.c=NET.p=null;try{c&&c.close();p&&p.destroy()}catch(e){}
+if(was)R.forEach((r,q)=>{if(r.rem){r.rem=0;r.n++;rst(r);r.ri.setAttribute('class','ri');put(r,58,211,0);cheek(r);drawBG(q);drawFG(q);drawFL(q)}});
+if(retry&&NET.auto&&NET.code){NET.st='re';render();clearTimeout(NET.rt);NET.rt=setTimeout(()=>reconn(),2000)}else{NET.st='';showCage()}}
+function up(me){clearTimeout(NET.rt);NET.on=1;NET.me=me;NET.st='on';NET.auto=1;saveRoom(1);NET.c.off('data');NET.c.on('data',onData);NET.c.on('close',()=>drop(1));
+clearInterval(NET.hb);NET.hb=setInterval(()=>{if(NET.on)net({t:'ping'})},4000);
 if(me){NET.c.send({t:'reqS'});R.forEach(r=>{r.rem=1;r.n++;rst(r);r.ls=r.lb=r.lg2=''})}else{net({t:'S',S:fullS()});NET.k=0;clearInterval(NET.iv);NET.iv=setInterval(()=>{net({t:'s',a:[snap(0),snap(1)],gm:S.gm});if(++NET.k%5==0)net({t:'S',S:fullS()})},200)}
-showCage();say(S.cur,'เชื่อมต่อแล้ว! เลี้ยงด้วยกันนะ 🎉',180)}
-function bye(){const was=NET.on,c=NET.c,p=NET.p;clearInterval(NET.iv);NET.on=0;NET.c=NET.p=null;NET.st='';NET.code='';try{c&&c.close();p&&p.destroy()}catch(e){}
-if(was)R.forEach((r,q)=>{if(r.rem){r.rem=0;r.n++;rst(r);r.ri.setAttribute('class','ri');put(r,58,211,0);cheek(r);drawBG(q);drawFG(q);drawFL(q)}});showCage()}
+tab='home';showCage();say(S.cur,'อยู่ในห้อง '+NET.code+' แล้ว! เลี้ยงด้วยกันนะ 🎉',180)}
+function bye(manual){if(manual!==0){NET.auto=0;NET.code='';saveRoom(0);clearTimeout(NET.rt)}drop(0)}
 init();
 </script></body></html>
